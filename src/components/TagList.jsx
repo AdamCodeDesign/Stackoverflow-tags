@@ -14,6 +14,7 @@ import {
   MenuItem,
   IconButton,
   Button,
+  Pagination,
 } from "@mui/material";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -117,42 +118,12 @@ export default function TagsList() {
               </TableBody>
             </Table>
           </TableContainer>
-          <FormControl
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "40px",
-              justifyContent: "space-evenly",
-              margin: "0 auto",
-            }}
-          >
-            <Button
-            // variant="text"
-              color="primary"
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <NavigateBeforeIcon />
-            </Button>
-            <Select value={currentPage} onChange={handlePageChange} >
-              {Array.from(
-                { length: Math.ceil(tags.length / pageSize) },
-                (_, i) => (
-                  <MenuItem key={i + 1} value={i + 1} color="primary">
-                    Page {i + 1}
-                  </MenuItem>
-                )
-              )}
-            </Select>
-            <IconButton
-              color="primary"
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={startIndex + pageSize >= sortedTags.length}
-            >
-              <NavigateNextIcon />
-            </IconButton>
-          </FormControl>
-          
+          <Pagination
+            sx={{ marginTop: "15px", width: "100%" }}
+            count={10}
+            color="primary"
+            onChange={(event, newPage) => setCurrentPage(newPage)}
+          />
         </>
       )}
     </div>
