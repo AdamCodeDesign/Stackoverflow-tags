@@ -12,12 +12,15 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  IconButton,
-  Button,
   Pagination,
+  Stack,
+  Grid,
+  Button,
+  TextField,
 } from "@mui/material";
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 
 export default function TagsList() {
   const [tags, setTags] = useState([]);
@@ -25,7 +28,9 @@ export default function TagsList() {
   const [error, setError] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortField, setSortField] = useState("name");
-  const [sortDirection, setSortDirection] = useState("asc");
+  const [sortDirection, setSortDirection] = useState("a-z");
+  const [nameIconDisable, setNameIconDisable] = useState(false);
+  const [countIconDisable, setCountIconDisable] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = itemsPerPage;
 
@@ -50,50 +55,37 @@ export default function TagsList() {
     setItemsPerPage(event.target.value);
   };
 
-  const handleSortFieldChange = (event) => {
-    setSortField(event.target.value);
-  };
-
-  const handleSortDirectionChange = (event) => {
-    setSortDirection(event.target.value);
-  };
-
   const sortedTags = tags.sort((a, b) => {
-    const compareValue = sortDirection === "asc" ? 1 : -1;
+    const compareValue = sortDirection === "a-z" ? 1 : -1;
     return a[sortField] > b[sortField] ? compareValue : -compareValue;
   });
 
-  const handlePageChange = (event) => {
-    setCurrentPage(parseInt(event.target.value, 10));
-  };
-
   const startIndex = (currentPage - 1) * pageSize;
-  const visibleTags = tags.slice(startIndex, startIndex + pageSize);
+  const visibleTags = sortedTags.slice(startIndex, startIndex + pageSize);
 
   return (
-    <div>
-      <FormControl>
-        <InputLabel>Items per page</InputLabel>
-        <Select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-          <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={20}>20</MenuItem>
-          <MenuItem value={50}>50</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl>
-        <InputLabel>Sort by</InputLabel>
-        <Select value={sortField} onChange={handleSortFieldChange}>
-          <MenuItem value="name">Name</MenuItem>
-          <MenuItem value="count">Count</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl>
-        <InputLabel>Sort direction</InputLabel>
-        <Select value={sortDirection} onChange={handleSortDirectionChange}>
-          <MenuItem value="asc">Ascending</MenuItem>
-          <MenuItem value="desc">Descending</MenuItem>
-        </Select>
-      </FormControl>
+    <Stack p={1}>
+      <Grid container>
+        <Grid item >
+          <TextField
+            size="small"
+            value={itemsPerPage}
+            select
+            sx={{
+              width: "100%",
+              bgcolor: "white",
+              fontSize: "1em",
+              borderRadius: "6px",
+            }}
+            onChange={handleItemsPerPageChange}
+          >
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={tags.length}>all</MenuItem>
+          </TextField>
+        </Grid>
+      </Grid>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -104,28 +96,94 @@ export default function TagsList() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Count</TableCell>
+                  <TableCell>
+                    Name{" "}
+                    {sortDirection === "a-z" ? (
+                      <Button
+                        onClick={() => {
+                          setSortDirection("z-a");
+                          setSortField("name");
+                          setCountIconDisable(true);
+                          setNameIconDisable(false);
+                        }}
+                      >
+                        {nameIconDisable ? (
+                          <FiberManualRecordIcon fontSize="" />
+                        ) : (
+                          <ArrowUpwardIcon />
+                        )}
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setSortDirection("a-z");
+                          setSortField("name");
+                          setCountIconDisable(true);
+                          setNameIconDisable(false);
+                        }}
+                      >
+                        {nameIconDisable ? (
+                          <FiberManualRecordIcon fontSize="" />
+                        ) : (
+                          <ArrowDownwardIcon />
+                        )}
+                      </Button>
+                    )}
+                  </TableCell>
+                  <TableCell align="center" sx={{paddingLeft:'50px'}}>
+                    Count{" "}
+                    {sortDirection === "a-z" ? (
+                      <Button
+                        onClick={() => {
+                          setSortDirection("z-a");
+                          setSortField("count");
+                          setNameIconDisable(true);
+                          setCountIconDisable(false);
+                        }}
+                      >
+                        {countIconDisable ? (
+                          <FiberManualRecordIcon fontSize="" />
+                        ) : (
+                          <ArrowUpwardIcon />
+                        )}
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setSortDirection("a-z");
+                          setSortField("count");
+                          setNameIconDisable(true);
+                          setCountIconDisable(false);
+                        }}
+                      >
+                        {countIconDisable ? (
+                          <FiberManualRecordIcon fontSize="" />
+                        ) : (
+                          <ArrowDownwardIcon />
+                        )}
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {visibleTags.map((tag) => (
                   <TableRow key={tag.name}>
                     <TableCell>{tag.name}</TableCell>
-                    <TableCell>{tag.count}</TableCell>
+                    <TableCell align="center">{tag.count}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
           <Pagination
-            sx={{ marginTop: "15px", width: "100%" }}
-            count={10}
+            sx={{ marginTop: "15px", maxWidth: "350px" }}
+            count={tags.length / pageSize}
             color="primary"
             onChange={(event, newPage) => setCurrentPage(newPage)}
           />
         </>
       )}
-    </div>
+    </Stack>
   );
 }
