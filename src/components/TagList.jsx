@@ -36,7 +36,8 @@ export default function TagsList() {
     const fetchTags = async () => {
       try {
         const response = await axios.get(
-          `https://api.stackexchange.com/2.3/tags?&pagesize=${itemsPerPage}&page=${currentPage}&order=desc&sort=popular&site=stackoverflow&filter=!nNPvSNVZJS`
+          `https://api.stackexchange.com/2.3/tags?&pagesize=${itemsPerPage}&page=${currentPage}&order=desc&sort=popular&site=stackoverflow&filter=!nNPvSNVZJS&key=6MoiMCbLqBVyBAt7GsOikA((
+            `
         );
         setTags(response.data.items);
         setTotal(response.data.total)
