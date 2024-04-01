@@ -14,6 +14,9 @@ import {
   Grid,
   Button,
   TextField,
+  CircularProgress,
+  Box,
+  Alert,
 } from "@mui/material";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
@@ -24,13 +27,12 @@ export default function TagsList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [total, setTotal] = useState(null)
-  const [sortField, setSortField] = useState("name");
-  const [sortDirection, setSortDirection] = useState("a-z");
+  const [total, setTotal] = useState(null);
+  const [sortField, setSortField] = useState("count");
+  const [sortDirection, setSortDirection] = useState("z-a");
   const [nameIconDisable, setNameIconDisable] = useState(false);
   const [countIconDisable, setCountIconDisable] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = itemsPerPage;
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -40,8 +42,8 @@ export default function TagsList() {
             `
         );
         setTags(response.data.items);
-        setTotal(response.data.total)
-        console.log('data',response.data)
+        setTotal(response.data.total);
+        console.log("data", response.data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -56,43 +58,45 @@ export default function TagsList() {
     setItemsPerPage(event.target.value);
   };
 
-  const sortedTags = tags.sort((a, b) => {
+  tags.sort((a, b) => {
     const compareValue = sortDirection === "a-z" ? 1 : -1;
     return a[sortField] > b[sortField] ? compareValue : -compareValue;
   });
 
-//   const startIndex = (currentPage - 1) * pageSize;
-//   const visibleTags = sortedTags.slice(startIndex, startIndex + pageSize);
-
   return (
     <Stack p={1}>
-      <Grid container>
-        <Grid item >
-          <TextField
-            size="small"
-            value={itemsPerPage}
-            select
-            sx={{
-              width: "100%",
-              bgcolor: "white",
-              fontSize: "1em",
-              borderRadius: "6px",
-            }}
-            onChange={handleItemsPerPageChange}
-          >
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={20}>20</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
-            <MenuItem value={100}>100</MenuItem>
-          </TextField>
-        </Grid>
-      </Grid>
       {loading ? (
-        <p>Loading...</p>
+        <Stack alignContent="center" spacing={2} sx={{margin: '40% auto'}}>
+          <p>Loading...</p> <CircularProgress color="secondary" />
+        </Stack>
       ) : error ? (
-        <p>Error: {error}</p>
+        <Alert variant="outlined" severity="error" sx={{margin: '40% auto'}}>
+          {error}
+        </Alert>
       ) : (
         <>
+          <Grid container>
+            <Grid item>
+              <TextField
+                size="small"
+                value={itemsPerPage}
+                select
+                sx={{
+                  width: "100%",
+                  bgcolor: "white",
+                  fontSize: "1em",
+                  borderRadius: "6px",
+                }}
+                onChange={handleItemsPerPageChange}
+              >
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </TextField>
+            </Grid>
+          </Grid>
+
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -131,7 +135,7 @@ export default function TagsList() {
                       </Button>
                     )}
                   </TableCell>
-                  <TableCell align="center" sx={{paddingLeft:'50px'}}>
+                  <TableCell align="center" sx={{ paddingLeft: "50px" }}>
                     Count{" "}
                     {sortDirection === "a-z" ? (
                       <Button
@@ -179,7 +183,7 @@ export default function TagsList() {
           </TableContainer>
           <Pagination
             sx={{ marginTop: "15px", maxWidth: "350px" }}
-            count={Math.ceil(total/ pageSize)}
+            count={Math.ceil(total / itemsPerPage)}
             color="primary"
             onChange={(event, newPage) => setCurrentPage(newPage)}
           />
