@@ -8,9 +8,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  FormControl,
-  InputLabel,
-  Select,
   MenuItem,
   Pagination,
   Stack,
@@ -27,6 +24,7 @@ export default function TagsList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [total, setTotal] = useState(null)
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState("a-z");
   const [nameIconDisable, setNameIconDisable] = useState(false);
@@ -38,9 +36,11 @@ export default function TagsList() {
     const fetchTags = async () => {
       try {
         const response = await axios.get(
-          "https://api.stackexchange.com/2.3/tags?pagesize=100&order=desc&sort=popular&site=stackoverflow"
+          `https://api.stackexchange.com/2.3/tags?&pagesize=${itemsPerPage}&page=${currentPage}&order=desc&sort=popular&site=stackoverflow&filter=!nNPvSNVZJS`
         );
         setTags(response.data.items);
+        setTotal(response.data.total)
+        console.log('data',response.data)
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -49,7 +49,7 @@ export default function TagsList() {
     };
 
     fetchTags();
-  }, []);
+  }, [itemsPerPage, currentPage]);
 
   const handleItemsPerPageChange = (event) => {
     setItemsPerPage(event.target.value);
@@ -60,8 +60,8 @@ export default function TagsList() {
     return a[sortField] > b[sortField] ? compareValue : -compareValue;
   });
 
-  const startIndex = (currentPage - 1) * pageSize;
-  const visibleTags = sortedTags.slice(startIndex, startIndex + pageSize);
+//   const startIndex = (currentPage - 1) * pageSize;
+//   const visibleTags = sortedTags.slice(startIndex, startIndex + pageSize);
 
   return (
     <Stack p={1}>
@@ -82,7 +82,7 @@ export default function TagsList() {
             <MenuItem value={10}>10</MenuItem>
             <MenuItem value={20}>20</MenuItem>
             <MenuItem value={50}>50</MenuItem>
-            <MenuItem value={tags.length}>all</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
           </TextField>
         </Grid>
       </Grid>
@@ -167,7 +167,7 @@ export default function TagsList() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {visibleTags.map((tag) => (
+                {tags.map((tag) => (
                   <TableRow key={tag.name}>
                     <TableCell>{tag.name}</TableCell>
                     <TableCell align="center">{tag.count}</TableCell>
@@ -178,7 +178,7 @@ export default function TagsList() {
           </TableContainer>
           <Pagination
             sx={{ marginTop: "15px", maxWidth: "350px" }}
-            count={tags.length / pageSize}
+            count={Math.ceil(total/ pageSize)}
             color="primary"
             onChange={(event, newPage) => setCurrentPage(newPage)}
           />
