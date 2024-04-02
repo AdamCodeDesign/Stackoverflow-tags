@@ -1,24 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  MenuItem,
-  Pagination,
-  Stack,
-  Grid,
-  Button,
-  TextField,
-  CircularProgress,
-  Alert,
-} from "@mui/material";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import { Pagination, Stack } from "@mui/material";
+import Loading from "./Loading";
+import Error from "./Error";
+import PagesizeSelect from "./PagesizeSelect";
+import TagsTable from "./TagsTable";
 
 export default function TagsList() {
   const [tags, setTags] = useState([]);
@@ -26,8 +12,6 @@ export default function TagsList() {
   const [error, setError] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [total, setTotal] = useState(null);
-  const [sortField, setSortField] = useState("count");
-  const [sortDirection, setSortDirection] = useState("z-a");
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -49,110 +33,20 @@ export default function TagsList() {
     fetchTags();
   }, [itemsPerPage, currentPage]);
 
-  const handleItemsPerPageChange = (event) => {
-    setItemsPerPage(event.target.value);
-  };
-
-  tags.sort((a, b) => {
-    const compareValue = sortDirection === "a-z" ? 1 : -1;
-    return a[sortField] > b[sortField] ? compareValue : -compareValue;
-  });
-
   return (
     <Stack p={1}>
       {loading ? (
-        <Stack alignContent="center" spacing={2} sx={{ margin: "40% auto" }}>
-          <p>Loading...</p> <CircularProgress color="secondary" />
-        </Stack>
+        <Loading />
       ) : error ? (
-        <Alert variant="outlined" severity="error" sx={{ margin: "40% auto" }}>
-          {error}
-        </Alert>
+        <Error error={error} />
       ) : (
         <>
-          <Grid container>
-            <Grid item>
-              <TextField
-                id="pagesize-select"
-                size="small"
-                value={itemsPerPage}
-                select
-                sx={{
-                  "& #pagesize-select": { fontSize: "14px" },
-                  width: "100%",
-                  bgcolor: "white",
-                  borderRadius: "6px",
-                }}
-                onChange={handleItemsPerPageChange}
-              >
-                <MenuItem value={10} sx={{fontSize: "14px"}}>10</MenuItem>
-                <MenuItem value={20} sx={{fontSize: "14px"}}>20</MenuItem>
-                <MenuItem value={50} sx={{fontSize: "14px"}}>50</MenuItem>
-                <MenuItem value={100} sx={{fontSize: "14px"}}>100</MenuItem>
-              </TextField>
-            </Grid>
-          </Grid>
+          <PagesizeSelect
+            itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
+          />
 
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left" sx={{paddingLeft:'6px'}}>
-                    {sortDirection === "a-z" ? (
-                      <Button 
-                        onClick={() => {
-                          setSortDirection("z-a");
-                          setSortField("name");
-                        }}
-                      >
-                        Name {sortField === "count" ? "" : <ArrowUpwardIcon />}
-                      </Button>
-                    ) : (
-                      <Button 
-                        onClick={() => {
-                          setSortDirection("a-z");
-                          setSortField("name");
-                        }}
-                      >
-                        Name{" "}
-                        {sortField === "count" ? "" : <ArrowDownwardIcon />}
-                      </Button>
-                    )}
-                  </TableCell>
-                  <TableCell align="right" sx={{paddingRight:'6px'}}>
-                    {sortDirection === "a-z" ? (
-                      <Button
-                        onClick={() => {
-                          setSortDirection("z-a");
-                          setSortField("count");
-                        }}
-                      >
-                        {sortField === "name" ? "" : <ArrowUpwardIcon />} Count
-                      </Button>
-                    ) : (
-                      <Button 
-                        onClick={() => {
-                          setSortDirection("a-z");
-                          setSortField("count");
-                        }}
-                      >
-                        
-                        {sortField === "name" ? "" : <ArrowDownwardIcon />} Count
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tags.map((tag) => (
-                  <TableRow key={tag.name}>
-                    <TableCell>{tag.name}</TableCell>
-                    <TableCell align="right">{tag.count}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <TagsTable tags={tags} />
           <Pagination
             sx={{ marginTop: "15px", maxWidth: "370px" }}
             count={Math.ceil(total / itemsPerPage)}
