@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Button,
   Paper,
@@ -12,46 +12,45 @@ import {
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
-export default function TagsTable({ tags }) {
-  const [sortField, setSortField] = useState("count");
-  const [sortDirection, setSortDirection] = useState("z-a");
-
-  tags.sort((a, b) => {
-    const compareValue = sortDirection === "a-z" ? 1 : -1;
-    return a[sortField] > b[sortField] ? compareValue : -compareValue;
-  });
+export default function TagsTable({
+  tags,
+  sortField,
+  setSortField,
+  sortDirection,
+  setSortDirection,
+}) {
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell align="left" sx={{ paddingLeft: "6px" }}>
-              {sortDirection === "a-z" ? (
+              {sortDirection === "asc" ? (
                 <Button
                   onClick={() => {
-                    setSortDirection("z-a");
+                    setSortDirection("desc");
                     setSortField("name");
                   }}
                 >
-                  Name {sortField === "count" ? "" : <ArrowUpwardIcon />}
+                  Name {sortField === "popular" ? "" : <ArrowUpwardIcon />}
                 </Button>
               ) : (
                 <Button
                   onClick={() => {
-                    setSortDirection("a-z");
+                    setSortDirection("asc");
                     setSortField("name");
                   }}
                 >
-                  Name {sortField === "count" ? "" : <ArrowDownwardIcon />}
+                  Name {sortField === "popular" ? "" : <ArrowDownwardIcon />}
                 </Button>
               )}
             </TableCell>
             <TableCell align="right" sx={{ paddingRight: "6px" }}>
-              {sortDirection === "a-z" ? (
+              {sortDirection === "asc" ? (
                 <Button
                   onClick={() => {
-                    setSortDirection("z-a");
-                    setSortField("count");
+                    setSortDirection("desc");
+                    setSortField("popular");
                   }}
                 >
                   {sortField === "name" ? "" : <ArrowUpwardIcon />} Count
@@ -59,8 +58,8 @@ export default function TagsTable({ tags }) {
               ) : (
                 <Button
                   onClick={() => {
-                    setSortDirection("a-z");
-                    setSortField("count");
+                    setSortDirection("asc");
+                    setSortField("popular");
                   }}
                 >
                   {sortField === "name" ? "" : <ArrowDownwardIcon />} Count

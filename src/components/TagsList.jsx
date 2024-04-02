@@ -13,12 +13,14 @@ export default function TagsList() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [total, setTotal] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState("popular");
+  const [sortDirection, setSortDirection] = useState("desc");
 
   useEffect(() => {
     const fetchTags = async () => {
       try {
         const response = await axios.get(
-          `https://api.stackexchange.com/2.3/tags?&pagesize=${itemsPerPage}&page=${currentPage}&order=desc&sort=popular&site=stackoverflow&filter=!nNPvSNVZJS&key=6MoiMCbLqBVyBAt7GsOikA((
+          `https://api.stackexchange.com/2.3/tags?&pagesize=${itemsPerPage}&page=${currentPage}&order=${sortDirection}&sort=${sortField}&site=stackoverflow&filter=!nNPvSNVZJS&key=6MoiMCbLqBVyBAt7GsOikA((
             `
         );
         setTags(response.data.items);
@@ -31,7 +33,7 @@ export default function TagsList() {
     };
 
     fetchTags();
-  }, [itemsPerPage, currentPage]);
+  }, [itemsPerPage, currentPage, sortDirection, sortField]);
 
   return (
     <Stack p={1}>
@@ -46,7 +48,13 @@ export default function TagsList() {
             setItemsPerPage={setItemsPerPage}
           />
 
-          <TagsTable tags={tags} />
+          <TagsTable
+            tags={tags}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortDirection={sortDirection}
+            setSortDirection={setSortDirection}
+          />
           <Pagination
             sx={{ marginTop: "15px", maxWidth: "370px" }}
             count={Math.ceil(total / itemsPerPage)}

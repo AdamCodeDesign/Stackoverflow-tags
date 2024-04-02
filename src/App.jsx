@@ -1,5 +1,5 @@
 import { Container } from '@mui/material'
-import TagsList from './components/TagList'
+import TagsList from './components/TagsList'
 
 function App() {
 
