@@ -47,22 +47,22 @@ export default function TagsList() {
             itemsPerPage={itemsPerPage}
             setItemsPerPage={setItemsPerPage}
           />
-
           <TagsTable
             tags={tags}
             sortField={sortField}
             setSortField={setSortField}
             sortDirection={sortDirection}
             setSortDirection={setSortDirection}
-          />
+          />{" "}
           <Pagination
             sx={{ marginTop: "15px", maxWidth: "370px" }}
             count={Math.ceil(total / itemsPerPage)}
             color="primary"
             onChange={(event, newPage) => {
               setCurrentPage(newPage);
+              setLoading(true);
             }}
-          />
+          />{" "}
         </>
       )}
     </Stack>
