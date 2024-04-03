@@ -57,6 +57,7 @@ export default function TagsList() {
             setSortDirection={setSortDirection}
           />{" "}
           <Pagination
+          className="pagination"
             sx={{ marginTop: "15px", maxWidth: "370px" }}
             count={Math.ceil(total / itemsPerPage)}
             color="primary"

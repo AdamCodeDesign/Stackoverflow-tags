@@ -21,3 +21,9 @@ body {
   height: calc(100vh - 120px);
   overflow: auto;
 }
+
+.pagination{
+  position: fixed;
+  bottom: 0;
+  right: 35%;
+}
