@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { Grid, Pagination, Stack } from "@mui/material";
 import axios from "axios";
-import { Pagination, Stack } from "@mui/material";
 import Loading from "./Loading";
 import Error from "./Error";
 import PagesizeSelect from "./PagesizeSelect";
@@ -8,7 +8,7 @@ import TagsTable from "./TagsTable";
 
 export default function TagsList() {
   const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [total, setTotal] = useState(null);
@@ -25,10 +25,11 @@ export default function TagsList() {
         );
         setTags(response.data.items);
         setTotal(response.data.total);
-        setLoading(false);
+        setLoading(true);
+        setError(null);
       } catch (err) {
         setError(err.message);
-        setLoading(false);
+        setLoading(true);
       }
     };
 
@@ -37,12 +38,11 @@ export default function TagsList() {
 
   return (
     <Stack p={1}>
-      {loading ? (
-        <Loading />
-      ) : error ? (
+      {!loading && <Loading />}
+      {error ? (
         <Error error={error} />
       ) : (
-        <>
+        <Grid container>
           <PagesizeSelect
             itemsPerPage={itemsPerPage}
             setItemsPerPage={setItemsPerPage}
@@ -58,12 +58,14 @@ export default function TagsList() {
             sx={{ marginTop: "15px", maxWidth: "370px" }}
             count={Math.ceil(total / itemsPerPage)}
             color="primary"
+            page={currentPage}
             onChange={(event, newPage) => {
               setCurrentPage(newPage);
-              setLoading(true);
+              setLoading(false);
+              setError(null);
             }}
           />{" "}
-        </>
+        </Grid>
       )}
     </Stack>
   );

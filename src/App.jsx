@@ -4,7 +4,7 @@ import TagsList from './components/TagsList'
 function App() {
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" className='tags'>
      <TagsList/>
     </Container>
   )

@@ -1,8 +1,19 @@
-body{
+body {
   background-color: whitesmoke;
 }
 
-*{
+* {
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+.tags {
+  position: relative;
+}
+
+.loading{
+  position: absolute;
+  z-index: 1;
+  top: 100px;
+  right: 50%;
 }

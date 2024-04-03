@@ -69,7 +69,7 @@ export default function TagsTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {tags.map((tag) => (
+          {tags?.map((tag) => (
             <TableRow key={tag.name}>
               <TableCell>{tag.name}</TableCell>
               <TableCell align="right">{tag.count}</TableCell>
