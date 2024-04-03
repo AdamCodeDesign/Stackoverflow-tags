@@ -20,10 +20,12 @@ body {
 .table-container{
   height: calc(100vh - 120px);
   overflow: auto;
+  margin-bottom: 150px;
 }
 
 .pagination{
   position: fixed;
   bottom: 0;
   right: 35%;
+  margin: 15px auto;
 }
