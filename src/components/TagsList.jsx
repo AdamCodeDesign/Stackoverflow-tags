@@ -5,6 +5,7 @@ import Loading from "./Loading";
 import Error from "./Error";
 import PagesizeSelect from "./PagesizeSelect";
 import TagsTable from "./TagsTable";
+import TotalTags from "./TotalTags";
 
 export default function TagsList() {
   const [tags, setTags] = useState([]);
@@ -43,6 +44,7 @@ export default function TagsList() {
         <Error error={error} />
       ) : (
         <Grid container>
+          <TotalTags total={total}/>
           <PagesizeSelect
             itemsPerPage={itemsPerPage}
             setItemsPerPage={setItemsPerPage}

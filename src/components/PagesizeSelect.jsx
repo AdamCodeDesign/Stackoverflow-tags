@@ -1,5 +1,4 @@
 import { Grid, MenuItem, TextField } from "@mui/material";
-import React from "react";
 
 export default function PagesizeSelect({ itemsPerPage, setItemsPerPage }) {
   const handleItemsPerPageChange = (event) => {
